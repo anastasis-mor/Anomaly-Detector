@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const Log = require("../models/logModel");
+
 
 const registerUser = async (req, res) => {
     const emailExist = await User.findOne({ email: req.body.email });
@@ -33,9 +35,17 @@ const loginUser = async (req, res) => {
         return res.status(400).send('Invalid password');
     }
 
+    await Log.create({
+        userId: user._id,
+        action: "login",
+        ipAddress: req.ip, // or req.headers['x-forwarded-for']
+        timestamp: new Date()
+      });
+
     // Create and assign a token
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
     res.header('auth-token', token).send(token);
+    
 };
 
 const updateUser = async (req, res) => {

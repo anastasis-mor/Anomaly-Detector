@@ -10,5 +10,6 @@ router.post('/login', loginUser);
 router.get('/all-users', authenticate,checkRole("admin"), getAllUsers);
 router.put('/:id', authenticate, updateUser);
 router.get('/logs', authenticate, logs);
+router.get('/:id', authenticate, getUserById);
 
 module.exports = router;

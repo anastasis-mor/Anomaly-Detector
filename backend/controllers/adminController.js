@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const Log = require("../models/logModel");
 
 const getAllUsers = async (req, res) => {
     try {
