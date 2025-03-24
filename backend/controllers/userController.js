@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const Log = require("../models/logModel");
-
+const { checkFailedLogins } = require("./anomalyController");
 
 const registerUser = async (req, res) => {
     const emailExist = await User.findOne({ email: req.body.email });
@@ -24,29 +24,52 @@ const registerUser = async (req, res) => {
 
 // User Login
 const loginUser = async (req, res) => {
+    // 1. Find the user by email
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-        return res.status(400).send('Email is not found');
-    }
-
-    // Check if the password is correct
-    const validPass = await bcrypt.compare(req.body.password, user.password);
-    if (!validPass) {
-        return res.status(400).send('Invalid password');
-    }
-
-    await Log.create({
-        userId: user._id,
-        action: "login",
-        ipAddress: req.ip, // or req.headers['x-forwarded-for']
+      // Log the failed attempt (no user found)
+      await Log.create({
+        userId: null, // or store the attempted email
+        action: "failed_login",
+        ipAddress: req.ip,
         timestamp: new Date()
       });
-
-    // Create and assign a token
+      return res.status(400).send("Email not found");
+    }
+  
+    // 2. Compare password
+    const validPass = await bcrypt.compare(req.body.password, user.password);
+    if (!validPass) {
+      // Log the failed attempt
+      await Log.create({
+        userId: user._id,
+        action: "failed_login",
+        ipAddress: req.ip,
+        timestamp: new Date()
+      });
+  
+      // Check if user has too many failed attempts
+      const isSuspicious = await checkFailedLogins(user._id, req.ip);
+      if (isSuspicious) {
+        console.log("Suspicious activity detected for user:", user._id);
+        return res.status(429).send("Too many failed attempts, please try again later.");
+      }
+  
+      return res.status(400).send("Invalid password");
+    }
+  
+    // 3. If password is valid, generate token & log success
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-    res.header('auth-token', token).send(token);
-    
-};
+    res.header("auth-token", token).send(token);
+  
+    await Log.create({
+      userId: user._id,
+      action: "login",
+      ipAddress: req.ip, // or req.headers["x-forwarded-for"]
+      timestamp: new Date()
+    });
+  };
+  
 
 const updateUser = async (req, res) => {
     try {

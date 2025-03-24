@@ -1,4 +1,3 @@
-// src/UserProfile.jsx
 import React, { useState } from 'react';
 import { getUserData } from './AuthService';
 
