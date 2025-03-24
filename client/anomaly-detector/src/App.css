@@ -40,3 +40,24 @@
 .read-the-docs {
   color: #888;
 }
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "sidebar navbar"
+    "sidebar main";
+}
+
+.sidebar {
+  grid-area: sidebar;
+}
+
+.navbar {
+  grid-area: navbar;
+}
+
+.main-content {
+  grid-area: main;
+}
