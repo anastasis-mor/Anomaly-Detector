@@ -18,12 +18,18 @@ const getAllUsers = async (req, res) => {
   
       // If user is admin, return all logs (or all logs for that site).
       if (user.role === 'admin') {
-        const allLogs = await Log.find({ site: user.site._id });
+        let allLogs;
+        if (user.site && user.site._id) {
+          allLogs = await Log.find({ site: user.site._id });
+        } else {
+          // For admin without a site, return all logs
+          allLogs = await Log.find({});
+        }
         return res.json(allLogs);
       }
   
       // If user is normal user, only return logs for that user's site or specifically that user
-      const userLogs = await Log.find({ user: user._id, site: user.site._id });
+      const userLogs = await Log.find({ user: user._id, site: user.site._id ? user.site._id : null});
       return res.json(userLogs);
   
     } catch (error) {
