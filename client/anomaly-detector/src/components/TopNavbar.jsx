@@ -1,31 +1,48 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { decodeToken } from './utils/decodedToken';
 
 function TopNavbar({ isLoggedIn }) {
   const handleLogout = () => {
-    localStorage.removeItem('authToken')
-    window.location.href = '/login'
+    localStorage.removeItem('authToken');
+    window.location.href = '/login';
+  };
+
+  let isAdmin = false;
+
+  if (isLoggedIn) {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      // Decode the token
+      const decodedToken = decodeToken(token);
+      if (decodedToken && decodedToken.role === 'admin') {
+        isAdmin = true;
+      }
+    }
   }
 
   return (
-    <div
-      style={{
-        background: '#ccc',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '1rem'
-      }}
-    >
-      {/* Left side: "Agent+" */}
+    <div style={{
+      background: '#ccc',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '1rem'
+    }}>
       <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
         Agent+
       </div>
 
-      {/* Right side: depends on login status */}
       <div>
         {isLoggedIn ? (
-          <button onClick={handleLogout}>Logout</button>
+          <>
+            {isAdmin && (
+              <Link to="/admin" style={{ marginRight: '1rem' }}>
+                Admin Dashboard
+              </Link>
+            )}
+            <button onClick={handleLogout}>Logout</button>
+          </>
         ) : (
           <>
             <Link to="/login" style={{ marginRight: '1rem' }}>Login</Link>
@@ -34,7 +51,7 @@ function TopNavbar({ isLoggedIn }) {
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default TopNavbar
+export default TopNavbar;

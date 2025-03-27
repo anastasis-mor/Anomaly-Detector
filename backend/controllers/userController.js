@@ -59,7 +59,7 @@ const loginUser = async (req, res) => {
     }
   
     // 3. If password is valid, generate token & log success
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET);
     res.header("auth-token", token).send(token);
   
     await Log.create({
