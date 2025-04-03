@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const logSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User"},
     action: { type: String, required: true }, // e.g., 'login', 'logout', 'failed_login'
     ipAddress: String,
     timestamp: { type: Date, default: Date.now },

@@ -22,16 +22,16 @@ function TopNavbar({ isLoggedIn }) {
   }
 
   return (
-    <div style={{
-      background: '#ccc',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '1rem'
-    }}>
-      <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
-        Agent+
-      </div>
+    <div
+      style={{
+        background: '#ccc',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '1rem',
+      }}
+    >
+      <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Agent+</div>
 
       <div>
         {isLoggedIn ? (
@@ -41,11 +41,17 @@ function TopNavbar({ isLoggedIn }) {
                 Admin Dashboard
               </Link>
             )}
+            {/* Add the Logs link here */}
+            <Link to="/logs" style={{ marginRight: '1rem' }}>
+              Logs Dashboard
+            </Link>
             <button onClick={handleLogout}>Logout</button>
           </>
         ) : (
           <>
-            <Link to="/login" style={{ marginRight: '1rem' }}>Login</Link>
+            <Link to="/login" style={{ marginRight: '1rem' }}>
+              Login
+            </Link>
             <Link to="/register">Register</Link>
           </>
         )}
