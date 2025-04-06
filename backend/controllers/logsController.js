@@ -32,10 +32,14 @@ const fetchLogs = async (req, res, next) => {
         query.site = user.site._id;
       }
     } else {
+        if (!user.site) {
+            return res.json({ logs: [], totalPages: 0, currentPage: 1 });
+          }
       // For non-admin users, filter logs by their site or user id as appropriate
       // Here we filter by site; alternatively, we might choose:
-      // query.userId = user._id;
-      query.site = user.site ? user.site._id : null;
+      //query.userId = user._id;
+      query.site = user.site._id;
+      
     }
 
     // Query the logs collection with pagination

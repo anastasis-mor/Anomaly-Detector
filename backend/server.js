@@ -6,6 +6,8 @@ const userRouter = require('./routers/authRoutes');
 const integrationRoutes = require('./routers/integrationRoutes');
 const logsRoutes = require('./routers/logsRoutes');
 
+require('./cronJobs');
+
 const app = express();
 const PORT = process.env.PORT || 8080;
 

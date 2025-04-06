@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const Log = require("../models/logModel");
 const { checkFailedLogins } = require("./anomalyController");
+const Site = require("../models/siteModel");
 
 const registerUser = async (req, res) => {
     const emailExist = await User.findOne({ email: req.body.email });
@@ -29,10 +30,11 @@ const loginUser = async (req, res) => {
     if (!user) {
       // Log the failed attempt (no user found)
       await Log.create({
-        userId: null, // or store the attempted email
-        action: "failed_login",
-        ipAddress: req.ip,
-        timestamp: new Date()
+        userId: user._id,
+        action: "login",
+        ipAddress: req.ip, // or req.headers["x-forwarded-for"]
+        timestamp: new Date(),
+        site: user.site ? user.site._id : null
       });
       return res.status(400).send("Email not found");
     }
@@ -66,7 +68,8 @@ const loginUser = async (req, res) => {
       userId: user._id,
       action: "login",
       ipAddress: req.ip, // or req.headers["x-forwarded-for"]
-      timestamp: new Date()
+      timestamp: new Date(),
+      site: user.site ? user.site._id : null
     });
   };
   
@@ -97,4 +100,28 @@ const getUserById = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });       
     }
 }
-module.exports = { registerUser, loginUser, getUserById, updateUser};
+
+const assignSiteToUser = async (req, res) => {
+  try {
+    const { userId, siteId } = req.body;
+    // Validate that the site exists
+    const site = await Site.findById(siteId);
+    if (!site) {
+      return res.status(404).json({ message: 'Site not found' });
+    }
+    // Update the user document to include the site reference
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { site: site._id },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ message: 'User assigned to site successfully', user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, getUserById, updateUser, assignSiteToUser};
