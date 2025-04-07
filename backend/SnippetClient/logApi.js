@@ -1,21 +1,21 @@
 (function() {
   // Configuration: Adjust these parameters as needed
   console.log('logApi.js loaded');
-  var LOG_API_ENDPOINT = 'http://localhost:8080/api/integration/ingest-log'; // Your log ingestion endpoint
-  var API_KEY = 'xxxx'; // The API key provided to the client
-  var FLUSH_INTERVAL_MS = 10000; // Flush batch every 10 seconds
-  var MAX_BATCH_SIZE = 50;       // Flush immediately if this many events are collected
-  var SAMPLING_RATE = 0.1;       // Only log 10% of clicks (adjust from 0 to 1)
+  const LOG_API_ENDPOINT = 'http://localhost:8080/api/integration/ingest-log'; // Your log ingestion endpoint
+  const API_KEY = process.env.API_INGEST; // The API key provided to the client
+  const FLUSH_INTERVAL_MS = 10000; // Flush batch every 10 seconds
+  const MAX_BATCH_SIZE = 50;       // Flush immediately if this many events are collected
+  const SAMPLING_RATE = 0.1;       // Only log 10% of clicks (adjust from 0 to 1)
 
   // In-memory buffer for click logs
-  var clickLogs = [];
+  const clickLogs = [];
 
   // Function to flush the batch of logs to your REST API
   function flushLogs() {
     if (clickLogs.length === 0) return;
 
     // Copy the current batch and clear the buffer
-    var batch = clickLogs.slice();
+    const batch = clickLogs.slice();
     clickLogs = [];
 
     // Send the batch using fetch
@@ -47,7 +47,7 @@
     if (Math.random() > SAMPLING_RATE) return;
 
     // Build the log data. You can include more metadata as needed.
-    var logData = {
+    const logData = {
       action: 'click',
       timestamp: new Date().toISOString(),
       details: {
@@ -86,7 +86,7 @@
           'Content-Type': 'application/json',
           'x-api-key': API_KEY
         },
-        body:  JSON.stringify({ logs: [data] })
+        body: JSON.stringify(data)
       })
         .then(function(response) {
           return response.json();

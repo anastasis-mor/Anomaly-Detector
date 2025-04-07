@@ -48,7 +48,7 @@ const ingestLog = async (req, res) => {
       logData.site = siteDoc._id;
       
       const logRecord = await Log.create(logData);
-      return res.json({ success: true, log: logRecord });
+      return res.json({ success: true, log: logRecord, dbTest });
     }
   } catch (error) {
     console.error('Error ingesting log:', error);
