@@ -6,6 +6,7 @@ import Login from './Login'
 import Register from './Register'
 import AdminDashboard from './AdminDashboard'
 import UserDashboard from './UserDashboard';
+import UserActivityChart from './UserActivityChart';
 
 
 function App() {
@@ -16,7 +17,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/logs" element={<UserDashboard />} />
+        <Route path="/logs" element={<UserActivityChart />} />
+        <Route path="/user-dashboard" element={<UserDashboard />} />
       </Route>
     </Routes>
   )

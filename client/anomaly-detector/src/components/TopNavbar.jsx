@@ -41,9 +41,8 @@ function TopNavbar({ isLoggedIn }) {
                 Admin Dashboard
               </Link>
             )}
-            {/* Add the Logs link here */}
-            <Link to="/logs" style={{ marginRight: '1rem' }}>
-              Logs Dashboard
+            <Link to="/user-dashboard" style={{ marginRight: '1rem' }}>
+              User Dashboard
             </Link>
             <button onClick={handleLogout}>Logout</button>
           </>
