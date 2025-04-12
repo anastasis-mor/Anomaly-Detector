@@ -67,9 +67,6 @@ function AdminDashboard() {
 
   return (
     <div>
-      <h2>Admin Dashboard</h2>
-      <button onClick={handleLogout}>Logout</button>
-
       <section>
         <h3>All Users</h3>
         <ul>

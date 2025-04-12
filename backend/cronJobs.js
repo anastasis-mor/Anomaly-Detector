@@ -1,7 +1,8 @@
 const cron = require('node-cron');
-const Log = require('./models/logModel'); // Adjust the path as needed
+const Log = require('./models/logModel');
 const fs = require('fs');
 const path = require('path');
+const { checkForFailedLoginThreat } = require('./controllers/notifications');
 
 // Schedule a cron job to run every day at 3:00 AM
 cron.schedule('0 3 * * *', async () => {
@@ -33,4 +34,7 @@ cron.schedule('0 3 * * *', async () => {
   } catch (error) {
     console.error('Error during cron job:', error);
   }
+  setInterval(() => {
+    require('./notifications').checkForFailedLoginThreat();
+  }, 60000);
 });

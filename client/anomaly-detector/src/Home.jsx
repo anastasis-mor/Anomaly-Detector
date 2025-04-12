@@ -14,7 +14,6 @@ function Home() {
     >
       <h1>Welcome to Agent+</h1>
       <p style={{ maxWidth: '600px', textAlign: 'center' }}>
-        Graphs Will implement here
       </p>
 
     </div>

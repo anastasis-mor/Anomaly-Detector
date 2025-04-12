@@ -1,6 +1,7 @@
 const Log = require('../models/logModel');
 const ApiKey = require('../models/apiKey');
 const Site = require('../models/siteModel');
+const { runAllChecks } = require('./anomalyDetection');
 
 const ingestLog = async (req, res) => {
   try {
@@ -11,6 +12,8 @@ const ingestLog = async (req, res) => {
     const validKey = await ApiKey.findOne({ apiKey: clientApiKey });
     const siteDoc = await Site.findOne({ apiKey: validKey._id });
     
+    let siteId = siteDoc._id;
+    
     // Handle batch logs
     if (req.body.logs && Array.isArray(req.body.logs)) {
       const processedLogs = req.body.logs.map(log => {
@@ -19,7 +22,7 @@ const ingestLog = async (req, res) => {
           log.timestamp = new Date();
         }
         // Add site information
-        log.site = siteDoc._id;
+        log.site = siteId;
         return log;
       });
       
@@ -32,9 +35,13 @@ const ingestLog = async (req, res) => {
       
       // Create log records
       const logRecords = await Log.insertMany(validLogs);
+      
+      // Run anomaly detection checks after receiving logs
+      await runAllChecks(siteId.toString());
+      
       return res.json({ success: true, logs: logRecords });
     } else {
-      // Handle single log (existing code)
+      // Handle single log
       const logData = req.body;
       
       if (!logData.action) {
@@ -45,19 +52,19 @@ const ingestLog = async (req, res) => {
         logData.timestamp = new Date();
       }
       
-      logData.site = siteDoc._id;
+      logData.site = siteId;
       
       const logRecord = await Log.create(logData);
-      return res.json({ success: true, log: logRecord, dbTest });
+      
+      // Run anomaly detection checks after receiving a log
+      await runAllChecks(siteId.toString());
+      
+      return res.json({ success: true, log: logRecord });
     }
   } catch (error) {
     console.error('Error ingesting log:', error);
     return res.status(500).json({ error: 'Server error' });
   }
-  console.log('Request headers:', req.headers);
-console.log('Request body:', JSON.stringify(req.body, null, 2));
-console.log('Validating API key:', req.header('x-api-key'));
-console.log('Logs to be inserted:', JSON.stringify(processedLogs, null, 2));
 };
 
   const fetchLogs = async (req, res) => {

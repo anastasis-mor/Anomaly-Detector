@@ -5,10 +5,11 @@ const getLogsTimeSeries = async (req, res) => {
     // Pull the action filter from the query parameters if provided
     const { action } = req.query;
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000);
 
     // Match stage – include the action filter if provided
     const matchStage = {
-      timestamp: { $gte: twentyFourHoursAgo }
+      timestamp: { $gte: fortyEightHoursAgo }
     };
     if (action) {
       matchStage.action = action;

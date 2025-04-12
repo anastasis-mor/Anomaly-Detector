@@ -6,7 +6,8 @@ import Login from './Login'
 import Register from './Register'
 import AdminDashboard from './AdminDashboard'
 import UserDashboard from './UserDashboard';
-import UserActivityChart from './UserActivityChart';
+import UserActivityChart from './UserActivityChart'
+import AnomalyDetection from '../src/components/AnomalyDetection';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/logs" element={<UserActivityChart />} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
+        <Route path="/anomaly" element={<AnomalyDetection />} />
       </Route>
     </Routes>
   )
