@@ -23,6 +23,9 @@ const ingestLog = async (req, res) => {
         }
         // Add site information
         log.site = siteId;
+        if (!log.ipAddress) {
+          log.ipAddress = req.ip;
+        }
         return log;
       });
       
@@ -53,6 +56,10 @@ const ingestLog = async (req, res) => {
       }
       
       logData.site = siteId;
+
+      if (!logData.ipAddress) {
+        logData.ipAddress = req.ip;
+      }
       
       const logRecord = await Log.create(logData);
       

@@ -2,9 +2,10 @@ const cron = require('node-cron');
 const Log = require('./models/logModel');
 const fs = require('fs');
 const path = require('path');
-const { checkForFailedLoginThreat } = require('./controllers/notifications');
+const { checkForFailedLoginThreat } = require('./controllers/anomalyDetection');
 
 // Schedule a cron job to run every day at 3:00 AM
+let checkInterval;
 cron.schedule('0 3 * * *', async () => {
   try {
     console.log('Cron job started: Archiving logs older than 48 hours');
@@ -31,10 +32,14 @@ cron.schedule('0 3 * * *', async () => {
     } else {
       console.log('No logs to archive');
     }
+    if (checkInterval) {
+      clearInterval(checkInterval);
+    }
+    
   } catch (error) {
     console.error('Error during cron job:', error);
   }
-  setInterval(() => {
+  checkInterval = setInterval(() => {
     require('./notifications').checkForFailedLoginThreat();
   }, 60000);
 });

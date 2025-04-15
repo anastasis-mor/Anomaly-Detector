@@ -1,6 +1,8 @@
+// src/components/SidebarAnomalyAlert.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import io from 'socket.io-client';
+import socketService from './services/socketService';
+console.log('Socket service imported:', socketService);
 
 const SidebarAnomalyAlert = () => {
   const [alertCount, setAlertCount] = useState(0);
@@ -8,31 +10,25 @@ const SidebarAnomalyAlert = () => {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    // Connect to socket server
-    const socket = io('http://localhost:8080', {
-      query: { siteId: '67f438c6307f75fd26a4f160' }
-    });
-    
-    socket.on('connect', () => {
-        console.log('Sidebar socket connected with ID:', socket.id);
-        setConnected(true);
-      });
-
-    socket.on('disconnect', () => {
-      setConnected(false);
-    });
-
-    socket.on('alert', (data) => {
-      console.log('Sidebar received alert:', data);
-      setAlertCount(prev => prev + 1);
+    const initializeSocket = async () => {
+      await socketService.connect();
       
-      if (data.severity === 'High' || data.severity === 'Critical') {
-        setHasHighSeverity(true);
-      }
-    });
-
+      // Check directly if the socket is connected
+      const isConnected = socketService.isSocketConnected();
+      console.log('Socket connected status:', isConnected);
+      setConnected(isConnected);
+    };
+    
+    initializeSocket();
+    
+    // Check connection status every second for debugging
+    const intervalId = setInterval(() => {
+      const isConnected = socketService.isSocketConnected();
+      setConnected(isConnected);
+    }, 1000);
+    
     return () => {
-      socket.disconnect();
+      clearInterval(intervalId);
     };
   }, []);
 

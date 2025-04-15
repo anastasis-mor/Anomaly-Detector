@@ -57,19 +57,55 @@ const AnomalyDetection = () => {
     fetchAlerts();
     
     // Initialize socket connection
-    const siteId = '67f438c6307f75fd26a4f160'; // Default or from storage
-    const socketInstance = io('http://localhost:8080', {
-      query: { siteId }
-    });
+    const connectToSocket = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          console.error('No auth token found');
+          return;
+        }
+        
+        // Try to get the site ID from localStorage first
+        let siteId = localStorage.getItem('userSiteId');
+        
+        // If not found in localStorage, fetch from API
+        if (!siteId) {
+          try {
+            const response = await fetch('http://localhost:8080/user/me/site', {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              siteId = data.siteId;
+              // Store for future use
+              localStorage.setItem('userSiteId', siteId);
+            } else {
+              console.error('Failed to fetch site ID');
+            }
+          } catch (error) {
+            console.error('Error fetching site ID:', error);
+          }
+        }
+        
+        console.log('Connecting socket with site ID:', siteId);
+        
+        // Connect with the site ID
+        const socketInstance = io('http://localhost:8080', {
+          query: { siteId }
+        });
     
     setSocket(socketInstance);
 
     // Set up event listeners
     socketInstance.on('connect', () => {
-      console.log('Main anomaly detection component connected to socket with ID:', socketInstance.id);
+      console.log('Connected to socket with ID:', socketInstance.id);
       setConnected(true);
     });
 
+    // Rest of your socket event handlers remain the same
     socketInstance.on('disconnect', () => {
       console.log('Disconnected from socket server');
       setConnected(false);
@@ -110,16 +146,23 @@ const AnomalyDetection = () => {
 
     // Listen for cleared alerts
     socketInstance.on('alerts_cleared', () => {
-      // Refresh alerts after clearing
       fetchAlerts();
     });
+  } catch (error) {
+    // Add this catch block to fix the error
+    console.error('Error setting up socket connection:', error);
+  }
+};
 
-    // Clean up on component unmount
-    return () => {
-      socketInstance.disconnect();
-    };
+  connectToSocket();
+    
+  // Cleanup function
+  return () => {
+    if (socket) {
+      socket.disconnect();
+    }
+  };
   }, [fetchAlerts, filterType, filterSeverity]);
-
   useEffect(() => {
     if (pagination.offset >= 0) {
       fetchAlerts();

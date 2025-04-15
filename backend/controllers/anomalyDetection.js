@@ -63,6 +63,7 @@ const checkForFailedLoginThreat = async (siteId) => {
         severity: 'High',
         type: 'failed_login',
         siteId: siteId,
+        sourceIP: logs.length > 0 ? logs[0].ipAddress : undefined,
         timestamp: new Date(),
         relatedLogs: logs.map(log => log._id)
       });
