@@ -8,7 +8,7 @@
   const SAMPLING_RATE = 0.1;       // Only log 10% of clicks (adjust from 0 to 1)
 
   // In-memory buffer for click logs
-  const clickLogs = [];
+  let clickLogs = [];
 
   // Function to flush the batch of logs to your REST API
   function flushLogs() {
