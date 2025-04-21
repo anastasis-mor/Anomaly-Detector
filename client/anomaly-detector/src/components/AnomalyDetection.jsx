@@ -123,16 +123,22 @@ const AnomalyDetection = () => {
         (filterType === 'all' || data.type === filterType) &&
         (filterSeverity === 'all' || data.severity === filterSeverity)
       ) {
-        setAlerts(prevAlerts => [
-          {
-            ...data, 
-            timestamp: new Date(data.timestamp || Date.now())
-          }, 
-          ...prevAlerts
-        ]);
+        setAlerts(prevAlerts => {
+          // Check if alert with this ID already exists
+          const exists = prevAlerts.some(alert => alert._id === data._id);
+          if (exists) {
+            return prevAlerts; // Don't add duplicates
+          }
+          return [
+            {
+              ...data, 
+              timestamp: new Date(data.timestamp || Date.now())
+            }, 
+            ...prevAlerts
+          ];
+        });
       }
     });
-
     // Listen for resolved alerts
     socketInstance.on('alert_resolved', (data) => {
       setAlerts(prevAlerts => 

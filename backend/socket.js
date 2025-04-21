@@ -26,7 +26,6 @@ const initSocket = (server) => {
   //   });
   // });
   io.on('connection', (socket) => {
-    console.log('Client connected:', socket.id);
     
     // Join site-specific room for targeted alerts
     const siteId = socket.handshake.query.siteId;

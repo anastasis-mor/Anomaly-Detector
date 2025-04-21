@@ -129,7 +129,7 @@ const markAlertAsResolved = async (req, res) => {
       { 
         status: 'resolved',
         resolvedAt: new Date(),
-        resolvedBy: req.user.id
+        resolvedBy: req.userId
       },
       { new: true }
     );
@@ -179,7 +179,7 @@ const clearAllAlerts = async (req, res) => {
       { 
         status: 'resolved',
         resolvedAt: new Date(),
-        resolvedBy: req.user.id
+        resolvedBy: req.userId
       }
     );
     
