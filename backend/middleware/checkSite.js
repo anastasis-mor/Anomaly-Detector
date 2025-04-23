@@ -2,7 +2,7 @@ const User = require('../models/userModel');
 
 const checkSite = async (req, res) => {
     try {
-      const user = await User.findById(req.user._id).populate('site');
+      const user = await User.findById(req.userId).populate('site');
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }

@@ -76,7 +76,8 @@ class SocketService {
       
       // Connect to socket server
       this.socket = io('http://localhost:8080', {
-        query: { siteId: useSiteId }
+        query: { siteId: useSiteId },
+        auth: { token: localStorage.getItem('authToken') }
       });
       
       // Set up base event handlers

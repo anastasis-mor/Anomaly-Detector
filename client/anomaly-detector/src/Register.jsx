@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { registerUser } from './AuthService';
 
 function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -12,6 +14,7 @@ function Register() {
       const response = await registerUser(name, email, password);
       console.log('Register response:', response.data);
       alert('Registration successful!');
+      navigate('/login');
     } catch (error) {
       console.error('Error registering:', error.response?.data);
       alert('Registration failed!');

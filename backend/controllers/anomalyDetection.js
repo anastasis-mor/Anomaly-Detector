@@ -79,9 +79,6 @@ const checkForFailedLoginThreat = async (siteId) => {
         io.to(siteId.toString()).emit('alert', alert);
         console.log(`Alert emitted to room ${siteId}`);
         
-        // Also emit globally for testing
-        io.emit('alert', alert);
-        console.log('Alert also emitted globally');
       } catch (socketError) {
         console.error('Error emitting socket event:', socketError);
       }

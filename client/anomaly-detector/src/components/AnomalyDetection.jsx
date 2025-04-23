@@ -94,7 +94,8 @@ const AnomalyDetection = () => {
         
         // Connect with the site ID
         const socketInstance = io('http://localhost:8080', {
-          query: { siteId }
+          query: { siteId },
+          auth: { token: localStorage.getItem('authToken') }
         });
     
     setSocket(socketInstance);

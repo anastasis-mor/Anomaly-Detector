@@ -23,7 +23,8 @@ const AlertSidebar = () => {
     // Initialize socket connection
     const siteId = localStorage.getItem('siteId') || '67f438c6307f75fd26a4f160'; // Default or from storage
     const socketInstance = io('http://localhost:8080', {
-      query: { siteId }
+      query: { siteId },
+      auth: { token: localStorage.getItem('authToken') }
     });
     
     setSocket(socketInstance);

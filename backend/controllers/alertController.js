@@ -1,4 +1,5 @@
 const Alert = require('../models/alertModel');
+const User = require('../models/userModel');
 const { getSocket } = require('../socket');
 
 // Get all alerts with filtering options
@@ -17,6 +18,13 @@ const getAlerts = async (req, res) => {
     // Build query object
     const query = {};
     
+    const user = await User.findById(req.userId).populate('site');
+    if (!user || !user.site) {
+      return res.status(403).json({ message: 'No site associated with this user' });
+    }
+    
+    // Add the user's site ID to the query
+    query.siteId = user.site._id;
     
     // Add type filter if provided
     if (type && type !== 'all') {
@@ -77,17 +85,23 @@ const getAlerts = async (req, res) => {
 // Get recent alerts for sidebar
 const getRecentAlerts = async (req, res) => {
   try {
+    const user = await User.findById(req.userId).populate('site');
+    if (!user || !user.site) {
+      return res.status(403).json({ message: 'No site associated with this user' });
+    }
+    
     // Get last 24 hours by default
     const timeThreshold = new Date();
     timeThreshold.setHours(timeThreshold.getHours() - 24);
     
-    // Count by severity for statistics
+    // Count by severity for statistics, filtering by site
     const counts = await Alert.aggregate([
-      { $match: { timestamp: { $gte: timeThreshold } } },
-      { $group: { 
-        _id: '$severity', 
-        count: { $sum: 1 } 
-      }}
+      { 
+        $match: { 
+          timestamp: { $gte: timeThreshold },
+          siteId: user.site._id  // Add the site filter here
+        } 
+      },
     ]);
     
     // Format the results
