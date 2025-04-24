@@ -1,7 +1,13 @@
 const Log = require('../models/logModel');
+const User = require('../models/userModel');
 
 const getLogsTimeSeries = async (req, res) => {
   try {
+
+    const user = await User.findById(req.userId).populate('site');
+    if (!user || !user.site) {
+      return res.status(403).json({ message: 'No site associated with this user' });
+    }
     // Pull the action filter from the query parameters if provided
     const { action } = req.query;
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -9,7 +15,8 @@ const getLogsTimeSeries = async (req, res) => {
 
     // Match stage – include the action filter if provided
     const matchStage = {
-      timestamp: { $gte: fortyEightHoursAgo }
+      timestamp: { $gte: fortyEightHoursAgo },
+      site: user.site._id
     };
     if (action) {
       matchStage.action = action;
