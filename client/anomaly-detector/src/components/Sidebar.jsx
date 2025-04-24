@@ -9,7 +9,6 @@ function Sidebar() {
       
       <h3>Links</h3>
       <ul style={{ listStyle: 'none', padding: 0 }}>
-        <li><Link to="/anomaly">Live Anomaly Alert</Link></li>
         <li><Link to="/logs">User Activity Logs</Link></li>
       </ul>
     </div>

@@ -167,7 +167,14 @@ class SocketService {
       callback(data);
     }
   }
+  removeAllListeners(event) {
+    if (this.listeners.has(event)) {
+      this.listeners.delete(event);
+    }
+  }
 }
+
+
 
 // Create a singleton instance
 const socketService = new SocketService();

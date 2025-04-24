@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import socketService from './services/socketService';
-console.log('Socket service imported:', socketService);
 
 const SidebarAnomalyAlert = () => {
   const [alertCount, setAlertCount] = useState(0);
@@ -17,18 +16,47 @@ const SidebarAnomalyAlert = () => {
       const isConnected = socketService.isSocketConnected();
       console.log('Socket connected status:', isConnected);
       setConnected(isConnected);
+      
+      // Set up event listeners for alerts
+      socketService.addListener('alert', (data) => {
+        console.log('Received alert in sidebar:', data);
+        setAlertCount(prev => prev + 1);
+        
+        // Check if this is a high severity alert
+        if (data.severity === 'High' || data.severity === 'Critical') {
+          setHasHighSeverity(true);
+        }
+      });
+      
+      // Listen for resolved alerts
+      socketService.addListener('alert_resolved', (data) => {
+        setAlertCount(prev => Math.max(0, prev - 1));
+        
+        // You might need more complex logic here to determine
+        // if there are still high severity alerts after one is resolved
+      });
+      
+      // Listen for alerts being cleared
+      socketService.addListener('alerts_cleared', () => {
+        setAlertCount(0);
+        setHasHighSeverity(false);
+      });
+      
+      // Listen for connection status changes
+      socketService.addListener('connection', (status) => {
+        setConnected(status.connected);
+      });
     };
     
     initializeSocket();
     
-    // Check connection status every second for debugging
-    const intervalId = setInterval(() => {
-      const isConnected = socketService.isSocketConnected();
-      setConnected(isConnected);
-    }, 1000);
-    
+    // Cleanup function
     return () => {
-      clearInterval(intervalId);
+      // Remove all listeners when component unmounts
+      socketService.removeAllListeners('alert');
+      socketService.removeAllListeners('alert_resolved');
+      socketService.removeAllListeners('alerts_cleared');
+      socketService.removeAllListeners('connection');
     };
   }, []);
 
