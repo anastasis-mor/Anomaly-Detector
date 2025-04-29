@@ -14,7 +14,7 @@ Anomaly Detector is a web application designed to identify unusual patterns in d
 
 ## 🎥 Demo
 
-[![Anomaly Detector Demo](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
+[![Anomaly Detector Demo](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)]()
 
 *Click the image above to watch the demo video*
 
@@ -45,14 +45,6 @@ Anomaly Detector is a web application designed to identify unusual patterns in d
 ![Alert Panel](./images/anomaly-alerts.jpg)
 *Alert panel for live anomalies*
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js (v14 or higher)
-- npm or yarn package manager
-
-
 ## 📈 Future Enhancements
 
 - **Machine Learning Integration**: Implementing ML algorithms to improve anomaly detection accuracy
@@ -63,7 +55,11 @@ Anomaly Detector is a web application designed to identify unusual patterns in d
 
 ## 📝 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+This project is licensed under a custom non-commercial license. 
+See the [LICENSE](./License.txt) file for details.
+
+**Important:** This software is intended for personal, educational, and non-commercial use only.
+Commercial use is prohibited without express written permission.
 
 ## 📬 Contact
 
