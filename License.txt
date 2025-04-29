@@ -1,4 +1,4 @@
-Copyright (c) 2025 Anastasis Moraitis. All rights reserved.
+Copyright (c) 2025 Anastasios Moraitis. All rights reserved.
 
 This software and associated documentation files (the "Software") may be used for 
 personal, educational, and non-commercial purposes only. No part of this Software 
